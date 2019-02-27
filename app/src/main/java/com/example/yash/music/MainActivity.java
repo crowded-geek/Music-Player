@@ -9,6 +9,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
@@ -120,5 +122,16 @@ public class MainActivity extends AppCompatActivity {
 
         ArrayAdapter<String> adapter=new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1,items);
         listView.setAdapter(adapter);
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                String name=listView.getItemAtPosition(position).toString();
+
+                startActivity(new Intent(MainActivity.this,MusicActivity.class).putExtra("songs",mysongs).putExtra("songname",name)
+                .putExtra("pos",position));
+            }
+        });
     }
 }
