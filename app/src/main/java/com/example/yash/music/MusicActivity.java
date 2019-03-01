@@ -16,6 +16,7 @@ import org.w3c.dom.Text;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class MusicActivity extends AppCompatActivity {
 
@@ -34,7 +35,7 @@ public class MusicActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_music);
 
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
 
         btn_pause=findViewById(R.id.play);
         btn_next=findViewById(R.id.next);
@@ -52,7 +53,7 @@ public class MusicActivity extends AppCompatActivity {
                 while(current<duration)
                 {
                     try {
-                        sleep(500);
+                        sleep(100);
                         current=mediaPlayer.getCurrentPosition();
                         seekBar.setProgress(current);
                     }
@@ -73,6 +74,7 @@ public class MusicActivity extends AppCompatActivity {
         Bundle bundle=i.getExtras();
         assert bundle != null;
         mysongs=(ArrayList) bundle.getParcelableArrayList("songs");
+        assert mysongs != null;
         sname=mysongs.get(position).getName().toString();
 
         final String song=i.getStringExtra("songname");
@@ -147,6 +149,7 @@ public class MusicActivity extends AppCompatActivity {
                 sname=mysongs.get(position).getName().toString();
                 songname.setText(sname);
                 mediaPlayer.start();
+                seekBar.setMax(mediaPlayer.getDuration());
 
             }
         });
@@ -171,6 +174,7 @@ public class MusicActivity extends AppCompatActivity {
                 sname=mysongs.get(position).getName().toString();
                 songname.setText(sname);
                 mediaPlayer.start();
+                seekBar.setMax(mediaPlayer.getDuration());
             }
         });
     }
