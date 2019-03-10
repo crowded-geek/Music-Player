@@ -12,6 +12,8 @@ import android.widget.Button;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
+import com.example.yash.music.Model.Song;
+
 import org.w3c.dom.Text;
 
 import java.io.File;
@@ -28,7 +30,7 @@ public class MusicActivity extends AppCompatActivity {
     Thread updateseekbar;
     int position;
     String sname;
-    ArrayList<File> mysongs;
+    ArrayList<Song> mysongs;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,15 +52,12 @@ public class MusicActivity extends AppCompatActivity {
                 int duration=mediaPlayer.getDuration();
                 int current=0;
 
-                while(current<duration)
-                {
+                while(current<duration) {
                     try {
                         sleep(100);
-                        current=mediaPlayer.getCurrentPosition();
+                        current = mediaPlayer.getCurrentPosition();
                         seekBar.setProgress(current);
-                    }
-                    catch (InterruptedException e)
-                    {
+                    } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
                 }
@@ -75,7 +74,7 @@ public class MusicActivity extends AppCompatActivity {
         assert bundle != null;
         mysongs=(ArrayList) bundle.getParcelableArrayList("songs");
         assert mysongs != null;
-        sname=mysongs.get(position).getName().toString();
+        sname=mysongs.get(position).getSongName();
 
         final String song=i.getStringExtra("songname");
 
@@ -146,7 +145,7 @@ public class MusicActivity extends AppCompatActivity {
                 Uri u=Uri.parse(mysongs.get(position).toString());
                 mediaPlayer=MediaPlayer.create(getApplicationContext(),u);
 
-                sname=mysongs.get(position).getName().toString();
+                sname=mysongs.get(position).getSongName();
                 songname.setText(sname);
                 mediaPlayer.start();
                 seekBar.setMax(mediaPlayer.getDuration());
@@ -171,7 +170,7 @@ public class MusicActivity extends AppCompatActivity {
 
                 Uri u=Uri.parse(mysongs.get(position).toString());
                 mediaPlayer=MediaPlayer.create(getApplicationContext(),u);
-                sname=mysongs.get(position).getName().toString();
+                sname=mysongs.get(position).getSongName();
                 songname.setText(sname);
                 mediaPlayer.start();
                 seekBar.setMax(mediaPlayer.getDuration());
