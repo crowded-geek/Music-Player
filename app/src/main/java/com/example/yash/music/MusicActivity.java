@@ -72,18 +72,14 @@ public class MusicActivity extends AppCompatActivity {
         Intent i=getIntent();
         Bundle bundle=i.getExtras();
         assert bundle != null;
-        mysongs=(ArrayList) bundle.getParcelableArrayList("songs");
+        mysongs = (ArrayList<Song>) bundle.getSerializable("songs");
         assert mysongs != null;
+
+        position=i.getIntExtra("pos",0);
         sname=mysongs.get(position).getSongName();
 
-        final String song=i.getStringExtra("songname");
-
-        songname.setText(song);
-        songname.setSelected(true);
-
-        position=bundle.getInt("pos",0);
-
-        Uri u=Uri.parse(mysongs.get(position).toString());
+        songname.setText(sname);
+        Uri u=Uri.parse(mysongs.get(position).getSongUrl());
 
         mediaPlayer=MediaPlayer.create(getApplicationContext(),u);
         mediaPlayer.start();
@@ -142,14 +138,13 @@ public class MusicActivity extends AppCompatActivity {
                     position=0;
                 }
 
-                Uri u=Uri.parse(mysongs.get(position).toString());
+                Uri u=Uri.parse(mysongs.get(position).getSongUrl());
                 mediaPlayer=MediaPlayer.create(getApplicationContext(),u);
 
                 sname=mysongs.get(position).getSongName();
                 songname.setText(sname);
                 mediaPlayer.start();
                 seekBar.setMax(mediaPlayer.getDuration());
-
             }
         });
 
@@ -168,7 +163,7 @@ public class MusicActivity extends AppCompatActivity {
                     position=mysongs.size()-1;
                 }
 
-                Uri u=Uri.parse(mysongs.get(position).toString());
+                Uri u=Uri.parse(mysongs.get(position).getSongUrl());
                 mediaPlayer=MediaPlayer.create(getApplicationContext(),u);
                 sname=mysongs.get(position).getSongName();
                 songname.setText(sname);

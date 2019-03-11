@@ -1,6 +1,8 @@
 package com.example.yash.music.Model;
 
-public class Song {
+import java.io.Serializable;
+
+public class Song implements Serializable {
 
     private String songName,songArtist,songUrl;
 
