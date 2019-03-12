@@ -6,29 +6,24 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
-import android.os.Parcelable;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.DividerItemDecoration;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ListView;
 
 import com.example.yash.music.Model.Song;
 import com.google.firebase.auth.FirebaseAuth;
-
-import java.io.Serializable;
 import java.util.ArrayList;
-
-import javax.xml.transform.Result;
 
 public class MainActivity extends AppCompatActivity {
 
-    ListView listView;
+    RecyclerView recyclerView;
     SongAdapter songAdapter;
     ArrayList<Song> songs;
 
@@ -39,20 +34,14 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         songs = new ArrayList<>();
-        listView = findViewById(R.id.listView);
+        recyclerView= findViewById(R.id.recyclerView);
         songAdapter = new SongAdapter(MainActivity.this, songs);
-        listView.setAdapter(songAdapter);
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent i = new Intent(MainActivity.this, MusicActivity.class);
-                Bundle b = new Bundle();
-                b.putSerializable("songs", songs);
-                i.putExtras(b);
-                i.putExtra("pos", position);
-                startActivity(i);
-            }
-        });
+        recyclerView.setAdapter(songAdapter);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(),
+                linearLayoutManager.getOrientation());
+        recyclerView.setLayoutManager(linearLayoutManager);
+        recyclerView.addItemDecoration(dividerItemDecoration);
         checkUserPermission();
     }
     @Override
@@ -107,6 +96,7 @@ public class MainActivity extends AppCompatActivity {
                     System.out.println(name);
                     String artist = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ARTIST));
                     String url = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DATA));
+
 
                     Song s = new Song(name,artist,url);
                     songs.add(s);
