@@ -96,9 +96,10 @@ public class MainActivity extends AppCompatActivity {
                     System.out.println(name);
                     String artist = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ARTIST));
                     String url = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DATA));
+                    String image=cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Albums.ALBUM_ART));
 
 
-                    Song s = new Song(name,artist,url);
+                    Song s = new Song(name,artist,url,image);
                     songs.add(s);
                     songAdapter.notifyDataSetChanged();
                 }while (cursor.moveToNext());

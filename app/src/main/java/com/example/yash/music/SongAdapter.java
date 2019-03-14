@@ -1,11 +1,13 @@
 package com.example.yash.music;
 
 import android.content.Context;
+import android.graphics.BitmapFactory;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.yash.music.Model.Song;
@@ -39,6 +41,7 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongHolder> {
                 .replace(".opus","")
                 .replace(".wav",""));
         SongHolder.artistname.setText(songs.get(position).getSongArtist());
+        SongHolder.image.setImageBitmap(BitmapFactory.decodeFile(songs.get(position).getSongimage()));
     }
 
     @Override
@@ -49,11 +52,13 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongHolder> {
     public static class SongHolder extends RecyclerView.ViewHolder {
 
         static TextView songname;
+        static ImageView image;
         static TextView artistname;
         public SongHolder(View itemView) {
             super(itemView);
             songname=itemView.findViewById(R.id.song_name);
             artistname=itemView.findViewById(R.id.artist_name);
+            image=itemView.findViewById(R.id.image);
         }
     }
 }
