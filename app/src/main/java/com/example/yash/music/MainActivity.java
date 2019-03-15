@@ -1,11 +1,21 @@
 package com.example.yash.music;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
+import android.content.ContentResolver;
+import android.content.ContentUris;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.media.MediaMetadataRetriever;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Environment;
+import android.os.ParcelFileDescriptor;
+import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
@@ -14,11 +24,18 @@ import android.os.Bundle;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import com.example.yash.music.Model.Song;
 import com.google.firebase.auth.FirebaseAuth;
+
+import java.io.ByteArrayInputStream;
+import java.io.FileDescriptor;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
@@ -92,14 +109,24 @@ public class MainActivity extends AppCompatActivity {
         if(cursor != null){
             if(cursor.moveToFirst()){
                 do{
+                    Uri songUri=
+                            ContentUris
+                                    .withAppendedId(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
+                                            cursor.getInt(cursor.getColumnIndex(MediaStore.Audio.Media._ID)));
                     String name = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DISPLAY_NAME));
                     System.out.println(name);
                     String artist = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ARTIST));
                     String url = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DATA));
-                    String image=cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Albums.ALBUM_ART));
-
-
-                    Song s = new Song(name,artist,url,image);
+                    String fpath = getRealPathFromURI(MainActivity.this, songUri);
+                    MediaMetadataRetriever mmr = new MediaMetadataRetriever();
+                    mmr.setDataSource(MainActivity.this, songUri);
+                    byte[] artBytes =  mmr.getEmbeddedPicture();
+                    Bitmap bitmap = null;
+                    if(artBytes != null) {
+                        InputStream is = new ByteArrayInputStream(mmr.getEmbeddedPicture());
+                        bitmap = BitmapFactory.decodeStream(is);
+                    }
+                    Song s = new Song(name,artist,url,bitmap);
                     songs.add(s);
                     songAdapter.notifyDataSetChanged();
                 }while (cursor.moveToNext());
@@ -108,5 +135,46 @@ public class MainActivity extends AppCompatActivity {
             cursor.close();
 
         }
+    }
+
+    private String getRealPathFromURI(Context context, Uri contentUri) {
+        Cursor cursor = null;
+        try {
+            String[] proj = { MediaStore.Images.Media.DATA };
+            cursor = context.getContentResolver().query(contentUri,  proj, null, null, null);
+            int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+            cursor.moveToFirst();
+            return cursor.getString(column_index);
+        } catch (Exception e) {
+            Log.e("", "getRealPathFromURI Exception : " + e.toString());
+            return "";
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+    }
+    public Bitmap getAlbumart(Long album_id)
+    {
+        Bitmap bm = null;
+        try
+        {
+            final Uri sArtworkUri = Uri
+                    .parse("content://media/external/audio/albumart");
+
+            Uri uri = ContentUris.withAppendedId(sArtworkUri, album_id);
+
+            ParcelFileDescriptor pfd = MainActivity.this.getContentResolver()
+                    .openFileDescriptor(uri, "r");
+
+            if (pfd != null)
+            {
+                FileDescriptor fd = pfd.getFileDescriptor();
+                bm = BitmapFactory.decodeFileDescriptor(fd);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return bm;
     }
 }

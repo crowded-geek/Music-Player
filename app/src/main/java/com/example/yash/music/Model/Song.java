@@ -1,12 +1,15 @@
 package com.example.yash.music.Model;
 
+import android.graphics.Bitmap;
+
 import java.io.Serializable;
 
 public class Song implements Serializable {
 
-    private String songName,songArtist,songUrl,songimage;
+    private String songName,songArtist,songUrl;
+    private Bitmap songimage;
 
-    public Song(String songName, String songArtist, String songUrl,String songimage) {
+    public Song(String songName, String songArtist, String songUrl, Bitmap songimage) {
         this.songName = songName;
         this.songArtist = songArtist;
         this.songUrl = songUrl;
@@ -28,5 +31,5 @@ public class Song implements Serializable {
         return songUrl;
     }
 
-    public String getSongimage(){return songimage;}
+    public Bitmap getSongimage(){return songimage;}
 }

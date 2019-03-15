@@ -41,7 +41,8 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongHolder> {
                 .replace(".opus","")
                 .replace(".wav",""));
         SongHolder.artistname.setText(songs.get(position).getSongArtist());
-        SongHolder.image.setImageBitmap(BitmapFactory.decodeFile(songs.get(position).getSongimage()));
+        SongHolder.image.setImageBitmap(songs.get(position).getSongimage());
+
     }
 
     @Override
